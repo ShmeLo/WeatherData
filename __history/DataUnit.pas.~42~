@@ -330,6 +330,7 @@ var
  i,j:integer; //счетчики
  x,y:integer; //координаты
  avgT, avgD, avgV:real; //среднее значение температуры, давления, влажности
+ minT, maxT:real; //максимальная и минимальная темпрературы
 begin
 
  //среднее значение температуры, давления, влажности
@@ -349,30 +350,100 @@ begin
  StatForm.AvgDResultLabel.Caption:=FloatToStr(SimpleRoundTo(avgD,-3))+' мм рт. ст.'; //выводим результат
  StatForm.AvgVResultLabel.Caption:=FloatToStr(SimpleRoundTo(avgV,-3))+' %'; //выводим результат
 
+ //Максимальная и минимальная темпрературы
+ minT:=StrToFloat(filtredwtable[0].t);
+ maxT:=StrToFloat(filtredwtable[0].t);
+ for i := 0 to length(filtredwtable)-1 do
+  begin
+    if maxT<StrToFloat(filtredwtable[i].t)
+      then
+        begin
+          maxT:=StrToFloat(filtredwtable[i].t);  //максимальное значение
+        end;
+
+    if minT>StrToFloat(filtredwtable[i].t)
+      then
+        begin
+          minT:=StrToFloat(filtredwtable[i].t);   //минимальное значение
+        end;
+    StatForm.MaxTResultLabel.Caption:=FloatToStr(maxT); //выводим значение max
+    StatForm.MinTResultLabel.Caption:=FloatToStr(minT); //выводим значение min
+  end;
+
+  //построение диаграммы min max температур
+  with StatForm.TMinMaxDiagram do
+    begin
+      StatForm.TMinMaxDiagram.Canvas.Rectangle(20,-(Round(minT)-Round(StatForm.TMinMaxDiagram.Height)+30),120,Round(StatForm.TMinMaxDiagram.Height-15)); //рисуем min
+      StatForm.TMinMaxDiagram.Canvas.Rectangle(125,-(Round(maxT)-Round(StatForm.TMinMaxDiagram.Height)+30),225,Round(StatForm.TMinMaxDiagram.Height-15)); //рисуем max
+      StatForm.TMinMaxDiagram.Canvas.TextOut(20,-(Round(minT)-Round(StatForm.TMinMaxDiagram.Height)+45),FloatToStr(minT));
+      StatForm.TMinMaxDiagram.Canvas.TextOut(125,-(Round(maxT)-Round(StatForm.TMinMaxDiagram.Height)+45),FloatToStr(maxT));
+    end;
+
+ //построение осей диаграммы min max температур
+ with StatForm.TMinMaxDiagram do
+   begin
+    StatForm.TMinMaxDiagram.Canvas.Pen.Width:=3;
+    StatForm.TMinMaxDiagram.Canvas.MoveTo(15,15);
+    StatForm.TMinMaxDiagram.Canvas.LineTo(15, Round(StatForm.TMinMaxDiagram.Height-15)); //ось OY
+    StatForm.TMinMaxDiagram.Canvas.MoveTo(15, Round(StatForm.TMinMaxDiagram.Height/2));
+    StatForm.TMinMaxDiagram.Canvas.LineTo(StatForm.TMinMaxDiagram.Width-15, Round(StatForm.TMinMaxDiagram.Height/2)); //ось OX
+    StatForm.TMinMaxDiagram.Canvas.TextOut(5,10,'y');   //подпись оси Y
+    StatForm.TMinMaxDiagram.Canvas.TextOut(StatForm.TMinMaxDiagram.Width-19, Round(StatForm.TMinMaxDiagram.Height/2+3),'x');  //подпись оси X
+   end;
+
+
  //построение графика температур
+ StatForm.TPeriodDiagram.Canvas.fillrect(StatForm.TPeriodDiagram.Canvas.cliprect); //очистка холста
  if StatForm.RadioGroupWeatherType.ItemIndex=1 then
   begin
-   //x:=StatForm.TPeriodDiagram.Width;  //ширина
-   //y:=StatForm.TPeriodDiagram.Height;  //высота
-   //StatForm.TPeriodDiagram.Canvas.Brush.Color:=clWhite;   //белый фон
-   i:=0;
+   StatForm.TPeriodDiagram.Canvas.MoveTo(15, StatForm.TPeriodDiagram.Height-15);
    with StatForm.TPeriodDiagram do
    begin
-    StatForm.TPeriodDiagram.Canvas.Pen.Width:=3;
-    StatForm.TPeriodDiagram.Canvas.LineTo(0, StatForm.TPeriodDiagram.Height);
-    StatForm.TPeriodDiagram.Canvas.LineTo(StatForm.TPeriodDiagram.Width, StatForm.TPeriodDiagram.Height);
-      repeat
-      i:=i+1;
-      x:=x+1;
-      y:=StrToInt(filtredwtable[i].t);
-      StatForm.TPeriodDiagram.Canvas.LineTo(x, y);
-      until i<=length(filtredwtable)-1;
+      StatForm.TPeriodDiagram.Canvas.Pen.Width:=1;
+      for i := 0 to (length(filtredwtable)-1) do
+        begin
+          if i=0 //первая точка без сдвига
+            then
+              x:=15
+            else
+              x:=x+Round((StatForm.TPeriodDiagram.Width-30)/(length(filtredwtable)-1)); //равномерное распределение данных по Х
+
+          y:=-(StrToInt(filtredwtable[i].t)-Round(StatForm.TPeriodDiagram.Height/2));  //Значения температур по Y
+          if i=0 then            //начинаем рисовать с первой точки, а не с начала координат
+            StatForm.TPeriodDiagram.Canvas.MoveTo(x,y);
+
+          StatForm.TPeriodDiagram.Canvas.LineTo(x,y);
+        end;
+
+        //цикл для добавления подписей данных
+        {for i := 0 to (length(filtredwtable)-1) do
+        begin
+          if i=0 //первая точка без сдвига
+            then
+              x:=15
+            else
+              x:=x+Round((StatForm.TPeriodDiagram.Width-30)/(length(filtredwtable)-1)); //равномерное распределение данных по Х
+
+          y:=-(StrToInt(filtredwtable[i].t)-Round(StatForm.TPeriodDiagram.Height/2));  //Значения температур по Y
+
+          StatForm.TPeriodDiagram.Canvas.TextOut(x,Round(StatForm.TPeriodDiagram.Height/2)+10,IntToStr(Round(StatForm.TPeriodDiagram.Height/2)-y)); //Подписи данных по Y
+        end;   }
     end;
 
 
   end;
 
-
+ //построение осей графика температур
+ with StatForm.TPeriodDiagram do
+   begin
+    StatForm.TPeriodDiagram.Canvas.Pen.Width:=3;
+    StatForm.TPeriodDiagram.Canvas.MoveTo(15,15);
+    StatForm.TPeriodDiagram.Canvas.LineTo(15, StatForm.TPeriodDiagram.Height-15); //ось OY
+    StatForm.TPeriodDiagram.Canvas.MoveTo(15, Round(StatForm.TPeriodDiagram.Height/2));
+    StatForm.TPeriodDiagram.Canvas.LineTo(StatForm.TPeriodDiagram.Width-15, Round(StatForm.TPeriodDiagram.Height/2)); //ось OX
+    StatForm.TPeriodDiagram.Canvas.TextOut(5,10,'y');   //подпись оси Y
+    StatForm.TPeriodDiagram.Canvas.TextOut(StatForm.TPeriodDiagram.Width-19, Round(StatForm.TPeriodDiagram.Height/2)+3,'x');  //подпись оси X
+   end;
 
 end;
 

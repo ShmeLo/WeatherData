@@ -22,6 +22,7 @@ type
   wdatafile:file of wdata; //типизированный файл
   id:integer; //публичный id записи в массиве
   filtredwtable: array of wdata;   //отфильтрованный динамический масиив данных
+  err: boolean; //флаг ошибки при фильтрации данных
   procedure AddRow;
   procedure DeleteRow;
   procedure SaveData;
@@ -242,6 +243,8 @@ var
 begin
  j:=0; //начальная запись  от фильтрованнго массива
  SetLength(filtredwtable,Length(wtable));
+try
+ err:=false; //нет ошибки
  if StatForm.RadioGroupWeatherType.ItemIndex=0
   then  //режим расчета "на дату"
     begin
@@ -269,6 +272,11 @@ begin
            end;
    end;
    SetLength(filtredwtable,j);
+except
+ //сообщение об ошибке
+  err:=true;  //флаг ошибки
+  MessageDlg('Ошибка!',mtError, mbOKCancel, 0);
+end;
 end;
 
 {процедура обновления таблицы}
@@ -325,12 +333,15 @@ for i := 0 to length(wtable)-1 do
 
 end;
 
+{рассчитывает avg, min, max темперетары и строит графики}
 procedure Stat;
 var
  i,j:integer; //счетчики
- x,y:integer; //координаты
+ x,y:integer; //координаты для постройки графика
  avgT, avgD, avgV:real; //среднее значение температуры, давления, влажности
  minT, maxT:real; //максимальная и минимальная темпрературы
+ minY1,minY2,maxY1,maxY2: integer; //координаты для постройки диаграмма
+ minTi,maxTi:integer; //номера записей в массиве с мин. макс тепрературами
 begin
 
  //среднее значение температуры, давления, влажности
@@ -359,27 +370,44 @@ begin
       then
         begin
           maxT:=StrToFloat(filtredwtable[i].t);  //максимальное значение
+          maxTi:=i;  //сохраняем номер записи
         end;
 
     if minT>StrToFloat(filtredwtable[i].t)
       then
         begin
           minT:=StrToFloat(filtredwtable[i].t);   //минимальное значение
+          minTi:=i;  //сохраняем номер записи
         end;
     StatForm.MaxTResultLabel.Caption:=FloatToStr(maxT); //выводим значение max
     StatForm.MinTResultLabel.Caption:=FloatToStr(minT); //выводим значение min
+    StatForm.TMinYearLabel.Caption:= filtredwtable[minTi].date; //дата min температуры
+    StatForm.TMaxYearLabel.Caption:= filtredwtable[maxTi].date; //дата max температуры
   end;
 
   //построение диаграммы min max температур
+  StatForm.TMinMaxDiagram.Canvas.Brush.Style:=bsSolid;
+  StatForm.TMinMaxDiagram.Canvas.Brush.Color:=clWhite;
+  StatForm.TMinMaxDiagram.Canvas.fillrect(StatForm.TMinMaxDiagram.Canvas.cliprect); //очистка холста
+
+  StatForm.TMinMaxDiagram.Canvas.Pen.Width:=1;
+  StatForm.TMinMaxDiagram.Canvas.Brush.Style:=bsCross; //стиль закраски
+  minY1:=Round(StatForm.TMinMaxDiagram.Height/2)-Round(minT);
+  minY2:=Round(StatForm.TMinMaxDiagram.Height/2);
+  maxY1:=Round(StatForm.TMinMaxDiagram.Height/2)-Round(maxT);
+  maxY2:=Round(StatForm.TMinMaxDiagram.Height/2);
   with StatForm.TMinMaxDiagram do
     begin
-      StatForm.TMinMaxDiagram.Canvas.Rectangle(20,-(Round(minT)-Round(StatForm.TMinMaxDiagram.Height)+30),120,Round(StatForm.TMinMaxDiagram.Height-15)); //рисуем min
-      StatForm.TMinMaxDiagram.Canvas.Rectangle(125,-(Round(maxT)-Round(StatForm.TMinMaxDiagram.Height)+30),225,Round(StatForm.TMinMaxDiagram.Height-15)); //рисуем max
-      StatForm.TMinMaxDiagram.Canvas.TextOut(20,-(Round(minT)-Round(StatForm.TMinMaxDiagram.Height)+45),FloatToStr(minT));
-      StatForm.TMinMaxDiagram.Canvas.TextOut(125,-(Round(maxT)-Round(StatForm.TMinMaxDiagram.Height)+45),FloatToStr(maxT));
+      StatForm.TMinMaxDiagram.Canvas.Brush.Color:=clPurple; //цвет фиолетовый
+      StatForm.TMinMaxDiagram.Canvas.Rectangle(20,minY1,120,minY2); //рисуем min
+      StatForm.TMinMaxDiagram.Canvas.Brush.Color:=clLime; //цвет салатовый
+      StatForm.TMinMaxDiagram.Canvas.Rectangle(125,maxY1,225,maxY2); //рисуем max
+      StatForm.TMinMaxDiagram.Canvas.TextOut(1,minY1,FloatToStr(minT)); //подпись min
+      StatForm.TMinMaxDiagram.Canvas.TextOut(1,maxY1,FloatToStr(maxT));  //подпись max
     end;
 
  //построение осей диаграммы min max температур
+ StatForm.TMinMaxDiagram.Canvas.Pen.Width:=3;
  with StatForm.TMinMaxDiagram do
    begin
     StatForm.TMinMaxDiagram.Canvas.Pen.Width:=3;

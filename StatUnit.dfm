@@ -227,5 +227,19 @@ object StatForm: TStatForm
       Width = 242
       Height = 177
     end
+    object TMinYearLabel: TLabel
+      Left = 40
+      Top = 171
+      Width = 56
+      Height = 13
+      Caption = 'xx.xx.xxxx'
+    end
+    object TMaxYearLabel: TLabel
+      Left = 159
+      Top = 171
+      Width = 56
+      Height = 13
+      Caption = 'xx.xx.xxxx'
+    end
   end
 end

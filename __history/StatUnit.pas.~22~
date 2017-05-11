@@ -29,9 +29,15 @@ type
     AvgDLabel: TLabel;
     AvgDResultLabel: TLabel;
     TPeriodDiagram: TImage;
+    TMinMaxDiagram: TImage;
+    MinTLabel: TLabel;
+    MaxTLabel: TLabel;
+    MinTResultLabel: TLabel;
+    MaxTResultLabel: TLabel;
     procedure FormCreate(Sender: TObject);
     procedure GoButtonClick(Sender: TObject);
     procedure RadioGroupWeatherTypeClick(Sender: TObject);
+
 
   private
     { Private declarations }
@@ -62,6 +68,30 @@ begin
  StatForm.StatTable.Cells[3,0]:= 'Влажность';
  StatForm.StatTable.Cells[4,0]:= 'Время суток';
 
+ //построение осей графика температур
+ with StatForm.TPeriodDiagram do
+   begin
+    StatForm.TPeriodDiagram.Canvas.Pen.Width:=3;
+    StatForm.TPeriodDiagram.Canvas.MoveTo(15,15);
+    StatForm.TPeriodDiagram.Canvas.LineTo(15, StatForm.TPeriodDiagram.Height-15); //ось OY
+    StatForm.TPeriodDiagram.Canvas.MoveTo(15, Round(StatForm.TPeriodDiagram.Height/2)); //ось OX
+    StatForm.TPeriodDiagram.Canvas.LineTo(StatForm.TPeriodDiagram.Width-15, Round(StatForm.TPeriodDiagram.Height/2)); //ось OX
+    StatForm.TPeriodDiagram.Canvas.TextOut(5,10,'y');   //подпись оси Y
+    StatForm.TPeriodDiagram.Canvas.TextOut(StatForm.TPeriodDiagram.Width-19, Round(StatForm.TPeriodDiagram.Height/2)+3,'x');  //подпись оси X
+   end;
+
+  //построение осей диаграммы min max температур
+ with StatForm.TMinMaxDiagram do
+   begin
+    StatForm.TMinMaxDiagram.Canvas.Pen.Width:=3;
+    StatForm.TMinMaxDiagram.Canvas.MoveTo(15,15);
+    StatForm.TMinMaxDiagram.Canvas.LineTo(15, Round(StatForm.TMinMaxDiagram.Height-15)); //ось OY
+    StatForm.TMinMaxDiagram.Canvas.MoveTo(15, Round(StatForm.TMinMaxDiagram.Height/2));
+    StatForm.TMinMaxDiagram.Canvas.LineTo(StatForm.TMinMaxDiagram.Width-15, Round(StatForm.TMinMaxDiagram.Height/2)); //ось OX
+    StatForm.TMinMaxDiagram.Canvas.TextOut(5,10,'y');   //подпись оси Y
+    StatForm.TMinMaxDiagram.Canvas.TextOut(StatForm.TMinMaxDiagram.Width-19, Round(StatForm.TMinMaxDiagram.Height/2+3),'x');  //подпись оси X
+   end;
+
 end;
 
 procedure TStatForm.GoButtonClick(Sender: TObject);
@@ -84,5 +114,6 @@ begin
     OnDayPanel.Visible:=false;
   end;
 end;
+
 
 end.

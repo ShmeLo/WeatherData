@@ -34,6 +34,8 @@ type
     MaxTLabel: TLabel;
     MinTResultLabel: TLabel;
     MaxTResultLabel: TLabel;
+    TMinYearLabel: TLabel;
+    TMaxYearLabel: TLabel;
     procedure FormCreate(Sender: TObject);
     procedure GoButtonClick(Sender: TObject);
     procedure RadioGroupWeatherTypeClick(Sender: TObject);
@@ -97,8 +99,12 @@ end;
 procedure TStatForm.GoButtonClick(Sender: TObject);
 begin
   FilterData;  //фильрует данные
-  UpdateFiltredTable;   //выводит данные в таблицу
-  Stat; //расчет показателей
+  if err=false then
+    begin
+      UpdateFiltredTable;   //выводит данные в таблицу
+      Stat; //расчет показателей
+    end;
+
 end;
 
 procedure TStatForm.RadioGroupWeatherTypeClick(Sender: TObject);
