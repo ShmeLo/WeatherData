@@ -1,0 +1,41 @@
+unit EditUnit;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs, StdCtrls, ExtCtrls;
+
+type
+  TEditForm = class(TForm)
+    EditPanel: TPanel;
+    EditLabelDate: TLabel;
+    EditLabelT: TLabel;
+    EditLabelD: TLabel;
+    EditLabelV: TLabel;
+    EditLabel: TLabel;
+    EditTimeOfDayRadioGroup: TRadioGroup;
+    EditEditT: TEdit;
+    EditEditD: TEdit;
+    EditEditV: TEdit;
+    EditOkButton: TButton;
+    EditCancelButton: TButton;
+    EditEditDate: TEdit;
+
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  EditForm: TEditForm;
+
+implementation
+
+uses DataUnit, MainUnit;
+
+{$R *.dfm}
+
+
+end.

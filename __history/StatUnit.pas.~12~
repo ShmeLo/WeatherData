@@ -1,0 +1,87 @@
+unit StatUnit;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs, StdCtrls, Mask, ExtCtrls, Grids;
+
+type
+  TStatForm = class(TForm)
+    StatPanel: TPanel;
+    StatTable: TStringGrid;
+    RadioGroupWeatherType: TRadioGroup;
+    OnDayPanel: TPanel;
+    OnPeriodPanel: TPanel;
+    OnDayEdit: TMaskEdit;
+    OnDayLabel: TLabel;
+    OnPeriodStartEdit: TMaskEdit;
+    OnPeriodEndEdit: TMaskEdit;
+    OnPeriodStartLabel: TLabel;
+    OnPeriodEndLabel: TLabel;
+    OnPeriodLabel: TLabel;
+    GoButton: TButton;
+    AvgTLabel: TLabel;
+    AvgTResultLabel: TLabel;
+    DiagramPanel: TPanel;
+    AvgVLabel: TLabel;
+    AvgVResultLabel: TLabel;
+    AvgDLabel: TLabel;
+    AvgDResultLabel: TLabel;
+    procedure FormCreate(Sender: TObject);
+    procedure GoButtonClick(Sender: TObject);
+    procedure RadioGroupWeatherTypeClick(Sender: TObject);
+
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  StatForm: TStatForm;
+
+implementation
+
+uses DataUnit;
+
+{$R *.dfm}
+
+
+procedure TStatForm.FormCreate(Sender: TObject);
+begin
+ //значение режима расчета по-умолчанию
+ RadioGroupWeatherType.ItemIndex:=0;
+
+ //шапка таблицы по-умолчанию
+  //добавление заголовков таблицы
+ StatForm.StatTable.Cells[0,0]:= 'Дата';
+ StatForm.StatTable.Cells[1,0]:= 'Температура';
+ StatForm.StatTable.Cells[2,0]:= 'Давление';
+ StatForm.StatTable.Cells[3,0]:= 'Влажность';
+ StatForm.StatTable.Cells[4,0]:= 'Время суток';
+
+end;
+
+procedure TStatForm.GoButtonClick(Sender: TObject);
+begin
+  FilterData;  //фильрует данные
+  UpdateFiltredTable;   //выводит данные в таблицу
+  Stat; //расчет показателей
+end;
+
+procedure TStatForm.RadioGroupWeatherTypeClick(Sender: TObject);
+begin
+ if RadioGroupWeatherType.ItemIndex=0 then
+  begin
+  OnPeriodPanel.Visible:=false;
+  OnDayPanel.Visible:=true;
+  end
+ else
+  begin
+    OnPeriodPanel.Visible:=true;
+    OnDayPanel.Visible:=false;
+  end;
+end;
+
+end.

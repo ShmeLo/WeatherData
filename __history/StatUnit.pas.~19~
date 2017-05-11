@@ -1,0 +1,107 @@
+unit StatUnit;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs, StdCtrls, Mask, ExtCtrls, Grids;
+
+type
+  TStatForm = class(TForm)
+    StatPanel: TPanel;
+    StatTable: TStringGrid;
+    RadioGroupWeatherType: TRadioGroup;
+    OnDayPanel: TPanel;
+    OnPeriodPanel: TPanel;
+    OnDayEdit: TMaskEdit;
+    OnDayLabel: TLabel;
+    OnPeriodStartEdit: TMaskEdit;
+    OnPeriodEndEdit: TMaskEdit;
+    OnPeriodStartLabel: TLabel;
+    OnPeriodEndLabel: TLabel;
+    OnPeriodLabel: TLabel;
+    GoButton: TButton;
+    AvgTLabel: TLabel;
+    AvgTResultLabel: TLabel;
+    DiagramPanel: TPanel;
+    AvgVLabel: TLabel;
+    AvgVResultLabel: TLabel;
+    AvgDLabel: TLabel;
+    AvgDResultLabel: TLabel;
+    TPeriodDiagram: TImage;
+    TMinMaxDiagram: TImage;
+    MinTLabel: TLabel;
+    MaxTLabel: TLabel;
+    MinTResultLabel: TLabel;
+    MaxTResultLabel: TLabel;
+    procedure FormCreate(Sender: TObject);
+    procedure GoButtonClick(Sender: TObject);
+    procedure RadioGroupWeatherTypeClick(Sender: TObject);
+
+
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  StatForm: TStatForm;
+
+implementation
+
+uses DataUnit;
+
+{$R *.dfm}
+
+
+procedure TStatForm.FormCreate(Sender: TObject);
+begin
+ //значение режима расчета по-умолчанию
+ RadioGroupWeatherType.ItemIndex:=0;
+
+ //шапка таблицы по-умолчанию
+  //добавление заголовков таблицы
+ StatForm.StatTable.Cells[0,0]:= 'Дата';
+ StatForm.StatTable.Cells[1,0]:= 'Температура';
+ StatForm.StatTable.Cells[2,0]:= 'Давление';
+ StatForm.StatTable.Cells[3,0]:= 'Влажность';
+ StatForm.StatTable.Cells[4,0]:= 'Время суток';
+
+ //построение осей графика
+ with StatForm.TPeriodDiagram do
+   begin
+    StatForm.TPeriodDiagram.Canvas.Pen.Width:=3;
+    StatForm.TPeriodDiagram.Canvas.MoveTo(15,15);
+    StatForm.TPeriodDiagram.Canvas.LineTo(15, StatForm.TPeriodDiagram.Height-15); //ось OY
+    StatForm.TPeriodDiagram.Canvas.MoveTo(15, Round(StatForm.TPeriodDiagram.Height/2)); //ось OX
+    StatForm.TPeriodDiagram.Canvas.LineTo(StatForm.TPeriodDiagram.Width-15, Round(StatForm.TPeriodDiagram.Height/2)); //ось OX
+    StatForm.TPeriodDiagram.Canvas.TextOut(5,10,'y');   //подпись оси Y
+    StatForm.TPeriodDiagram.Canvas.TextOut(StatForm.TPeriodDiagram.Width-19, Round(StatForm.TPeriodDiagram.Height/2)+3,'x');  //подпись оси X
+   end;
+
+end;
+
+procedure TStatForm.GoButtonClick(Sender: TObject);
+begin
+  FilterData;  //фильрует данные
+  UpdateFiltredTable;   //выводит данные в таблицу
+  Stat; //расчет показателей
+end;
+
+procedure TStatForm.RadioGroupWeatherTypeClick(Sender: TObject);
+begin
+ if RadioGroupWeatherType.ItemIndex=0 then
+  begin
+  OnPeriodPanel.Visible:=false;
+  OnDayPanel.Visible:=true;
+  end
+ else
+  begin
+    OnPeriodPanel.Visible:=true;
+    OnDayPanel.Visible:=false;
+  end;
+end;
+
+
+end.

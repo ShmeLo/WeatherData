@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<BorlandProject>
+	<Transactions>
+    <Transaction>1899.12.30 00:00:00.000.pas,C:\Users\Шмелев Сергей\Documents\Borland Studio Projects\WeatherData\Unit1.pas=C:\Users\Шмелев Сергей\Documents\Borland Studio Projects\WeatherData\StatUnit.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.dfm,C:\Users\Шмелев Сергей\Documents\Borland Studio Projects\W-Data\EditUnit.dfm=</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.dfm,C:\Users\Шмелев Сергей\Documents\Borland Studio Projects\Unit1.dfm=C:\Users\Шмелев Сергей\Documents\Borland Studio Projects\W-Data\MainUnit.dfm</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.pas,C:\Users\Шмелев Сергей\Documents\Borland Studio Projects\W-Data\Unit1.pas=C:\Users\Шмелев Сергей\Documents\Borland Studio Projects\W-Data\EditUnit.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.pas,C:\Users\Шмелев Сергей\Documents\Borland Studio Projects\W-Data\Unit1.pas=C:\Users\Шмелев Сергей\Documents\Borland Studio Projects\W-Data\EditUnit.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.dfm,C:\Users\Шмелев Сергей\Documents\Borland Studio Projects\WeatherData\Unit1.dfm=C:\Users\Шмелев Сергей\Documents\Borland Studio Projects\WeatherData\StatUnit.dfm</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.dfm,C:\Users\Шмелев Сергей\Documents\Borland Studio Projects\W-Data\Unit1.dfm=C:\Users\Шмелев Сергей\Documents\Borland Studio Projects\W-Data\EditUnit.dfm</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.bdsproj,C:\Users\Шмелев Сергей\Documents\Borland Studio Projects\Project1.bdsproj=C:\Users\Шмелев Сергей\Documents\Borland Studio Projects\W-Data\MainProject.bdsproj</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.dfm,C:\Users\Шмелев Сергей\Documents\Borland Studio Projects\W-Data\Unit1.dfm=C:\Users\Шмелев Сергей\Documents\Borland Studio Projects\W-Data\EditUnit.dfm</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.pas,C:\Users\Шмелев Сергей\Documents\Borland Studio Projects\W-Data\EditUnit.pas=</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.pas,C:\Users\Шмелев Сергей\Documents\Borland Studio Projects\Unit1.pas=C:\Users\Шмелев Сергей\Documents\Borland Studio Projects\W-Data\MainUnit.pas</Transaction>
+  </Transactions>
+</BorlandProject>

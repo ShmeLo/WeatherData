@@ -1,0 +1,49 @@
+unit EditUnit;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs, Grids, StdCtrls;
+
+type
+  TEditForm = class(TForm)
+    EditTable: TStringGrid;
+    CancelButton: TButton;
+    OkButton: TButton;
+    procedure FormCreate(Sender: TObject);
+
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  EditForm: TEditForm;
+  k:integer; //внешний id
+implementation
+
+uses MainUnit, DataUnit;
+
+{$R *.dfm}
+
+procedure TEditForm.FormCreate(Sender: TObject);
+begin
+ //добавление заголовков таблицы
+ EditTable.Cells[0,0]:= 'Дата';
+ EditTable.Cells[1,0]:= 'Температура';
+ EditTable.Cells[2,0]:= 'Давление';
+ EditTable.Cells[3,0]:= 'Влажность';
+ EditTable.Cells[4,0]:= 'Время суток';
+
+ EditTable.Cells[0,1]:= wtable[k].date;
+ EditTable.Cells[1,1]:= wtable[k].t;
+ EditTable.Cells[2,1]:= wtable[k].d;
+ EditTable.Cells[3,1]:= wtable[k].v;
+ EditTable.Cells[4,1]:= wtable[k].dn;   
+end;
+
+
+
+end.

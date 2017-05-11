@@ -1,0 +1,450 @@
+unit DataUnit;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs, Grids, ExtCtrls, StdCtrls, Math;
+
+type
+
+ wdata = record        //Создание типа данных-записи
+  date: String[10];      //дата
+  t:String[5];              //температура
+  d:String[5];              //давление
+  v:String[5];              //влажность
+  dn:String[5];          //время суток
+ end;
+
+ var
+  wtable: array of wdata;   //динамический масиив данных
+  f:wdata;     //запись массива
+  wdatafile:file of wdata; //типизированный файл
+  id:integer; //публичный id записи в массиве
+  filtredwtable: array of wdata;   //отфильтрованный динамический масиив данных
+  procedure AddRow;
+  procedure DeleteRow;
+  procedure SaveData;
+  procedure LoadData;
+  procedure UpdateTable;
+  procedure EditRow;
+  procedure FilterData;
+  procedure UpdateFiltredTable;
+  procedure AllDataToStatTable;
+  procedure Stat;
+
+implementation
+
+uses MainUnit, EditUnit, StatUnit;
+
+
+{процедура добавления строки}
+procedure AddRow;
+var
+ i:integer; //счетчики
+ a:real;    //переменная для проверки на ошибки
+ b:TDateTime; //переменная для проверки на ошибки
+ error:boolean; //флаг ошибки
+begin
+  error:=false;
+  try    //защита от ошибок. начало
+    b:=StrToDate(MainForm.EditDate.Text);
+    a:=StrToFloat(MainForm.EditT.Text);
+    a:=StrToFloat(MainForm.EditD.Text);
+    a:=StrToFloat(MainForm.EditV.Text);
+  except
+   error:=true;
+   MessageDlg('Введены некорректные данные!',mtError, mbOKCancel, 0);
+  end;       //защита от ошибок. окончание
+
+ if error=false
+ then
+  begin
+   //получение данных с формы ввода
+    f.date:=DateToStr(StrToDate(MainForm.EditDate.Text)); //чтобы дата всегда выглядела как дата
+    f.t:=MainForm.EditT.Text;
+    f.d:=MainForm.EditD.Text;
+    f.v:=MainForm.EditV.Text;
+    if MainForm.TimeOfDayRadioGroup.ItemIndex=0
+     then
+      f.dn:='День'
+     else
+      f.dn:='Ночь';
+    setlength(wtable,length(wtable)+1); //увеличиваем кол-во записей в массиве
+    wtable[length(wtable)-1]:=f;     //добавление записи в таблицу
+    UpdateTable;//перерисовка таблицы
+  end;
+
+end;
+
+
+
+{процедура удаления строки}
+procedure DeleteRow;
+var
+ i,j:integer; //счетчики
+begin
+try    //защита от ошибок. начало
+  //Выделенная строка
+  j:=MainForm.MainTable.Row-1;
+
+  //удаление выделенной строки из массива
+if length(wtable)>1
+  then
+   begin
+    for i := j to (length(wtable)-1) do
+     begin
+      wtable[i]:= wtable[i+1];
+      end;
+     setlength(wtable, length(wtable)-1);
+    end
+   else
+    if length(wtable)=1
+     then
+      begin
+       MainForm.MainTable.Cells[0,1]:= '';
+       MainForm.MainTable.Cells[1,1]:= '';
+       MainForm.MainTable.Cells[2,1]:= '';
+       MainForm.MainTable.Cells[3,1]:= '';
+       MainForm.MainTable.Cells[4,1]:= '';
+       setlength(wtable, length(wtable)-1);
+      end;
+  UpdateTable;  //перерисовка таблицы
+
+except
+  //сообщение об ошибке
+  MessageDlg('Ошибка!',mtError, mbOKCancel, 0);
+end;       //защита от ошибок. окончание
+end;
+
+
+{процедура редактирования строки}
+procedure EditRow;
+var
+ i,j:integer; //счетчики
+begin
+
+ //загрузка выделенной строки на форму редактирования
+ id:=MainForm.MainTable.Row-1;
+ EditForm.EditEditDate.Text:= wtable[id].date;
+ EditForm.EditEditT.Text:= wtable[id].t;
+ EditForm.EditEditD.Text:= wtable[id].d;
+ EditForm.EditEditV.Text:= wtable[id].v;
+ if wtable[id].dn='День' then
+    EditForm.EditTimeOfDayRadioGroup.ItemIndex:=0
+   else
+    EditForm.EditTimeOfDayRadioGroup.ItemIndex:=1;
+
+
+end;
+
+
+
+
+{процедура сохранения таблицы}
+procedure SaveData;
+var
+ i:integer; //счетчики
+begin
+AssignFile(wdatafile,'data.dat'); //Присваивает имя файла переменкой
+Rewrite(wdatafile); //Создает и открывает новый файл
+Seek(wdatafile,0); //Перемещаем курсор в начало файла
+
+for i := 0 to length(wtable)-1 do
+  Write(wdatafile,wtable[i]);
+
+CloseFile(wdatafile);    //освобождаем файл
+ShowMessage('Данные сохранены');
+
+end;
+
+
+
+{процедура загрузки таблицы}
+procedure LoadData;
+var
+ i,j:integer; //счетчики
+begin
+try
+AssignFile(wdatafile,'data.dat'); //Присваивает имя файла переменкой
+Reset(wdatafile); //Открывает существующий файл
+
+
+i:=0; //начальное значение счетчика
+SetLength(wtable,0);
+while not EOF(wdatafile) do
+begin
+  Seek(wdatafile,i);
+  SetLength(wtable,Length(wtable)+1); //увеличиваем размер массива
+  Read(wdatafile, f);
+  wtable[i]:=f;
+  i:=i+1;
+end;
+CloseFile(wdatafile);    //освобождаем файл
+MainForm.MainTable.RowCount:=length(wtable); //Количество строк таблике как записей в массиве
+UpdateTable;  //перерисовка таблицы
+
+except
+   //сообщение об ошибке
+  MessageDlg('Файл не найден',mtError, mbOKCancel, 0);
+end;
+end;
+
+
+
+{процедура обновления таблицы}
+procedure UpdateTable;
+var
+ i,j:integer; //счетчики
+begin
+MainForm.MainTable.Rowcount:=length(wtable)+1;
+
+//Чтобы точно была одна фиксированная строка (шапка таблицы)
+if MainForm.MainTable.RowCount=1
+  then
+   begin
+      MainForm.MainTable.Rowcount:=MainForm.MainTable.Rowcount+1;
+      MainForm.MainTable.FixedRows:=1;
+   end;
+
+//Вывод данных в таблицу
+for i := 0 to length(wtable)-1 do
+ begin
+ MainForm.MainTable.Cells[0,i+1]:= wtable[i].date;
+ MainForm.MainTable.Cells[1,i+1]:= wtable[i].t;
+ MainForm.MainTable.Cells[2,i+1]:= wtable[i].d;
+ MainForm.MainTable.Cells[3,i+1]:= wtable[i].v;
+ MainForm.MainTable.Cells[4,i+1]:= wtable[i].dn;
+ end;
+
+//удаление последней пустой строки
+  if (MainForm.MainTable.RowCount<>2) and (MainForm.MainTable.Cells[1,1]='') then
+    begin
+      for i := 0 to MainForm.MainTable.Rowcount - 1 do
+        begin
+         MainForm.MainTable.Cells[0,i]:= MainForm.MainTable.Cells[0,i+1];
+         MainForm.MainTable.Cells[1,i]:= MainForm.MainTable.Cells[1,i+1];
+         MainForm.MainTable.Cells[2,i]:= MainForm.MainTable.Cells[2,i+1];
+         MainForm.MainTable.Cells[3,i]:= MainForm.MainTable.Cells[3,i+1];
+         MainForm.MainTable.Cells[4,i]:= MainForm.MainTable.Cells[4,i+1];
+        end;
+      MainForm.MainTable.RowCount:=MainForm.MainTable.RowCount-1;
+    end;
+
+end;
+
+
+{проведура создает отфильрованный массив по введенным на StatForm данным}
+procedure FilterData;
+var
+ i,j:integer; //счетчики
+ dateA, dateB: TDate; //даты для фильтрации
+begin
+ j:=0; //начальная запись  от фильтрованнго массива
+ SetLength(filtredwtable,Length(wtable));
+ if StatForm.RadioGroupWeatherType.ItemIndex=0
+  then  //режим расчета "на дату"
+    begin
+      dateA:= StrToDate(StatForm.OnDayEdit.Text);  //конвертим текстовую дату из поля ввода в настоящую
+      for i := 0 to (length(wtable)-1) do  //проверяем весь массив
+       begin
+        if StrToDate(wtable[i].date)=dateA           //на соответствие с введенной датой
+         then                  //если да, то
+           begin
+            filtredwtable[j]:=wtable[i];   //переносим запись массива в отфильрованный массив
+            j:=j+1; //и сдвигаем счетчик номера записи отфильтрованного массива
+           end;
+       end;
+    end
+  else //режим расчета "за период"
+   begin
+    dateA:= StrToDate(StatForm.OnPeriodStartEdit.Text); //начальная дата
+    dateB:= StrToDate(StatForm.OnPeriodEndEdit.Text);  //конечная дата
+      for i := 0 to (length(wtable)-1) do   //проверяем весь массив
+        if (StrToDate(wtable[i].date)>=dateA) and (StrToDate(wtable[i].date)<=dateB)  //на соответствие вхождение в заданный диапазон
+         then
+           begin
+            filtredwtable[j]:=wtable[i];   //переносим запись массива в отфильрованный массив
+            j:=j+1; //и сдвигаем счетчик номера записи отфильтрованного массива
+           end;
+   end;
+   SetLength(filtredwtable,j);
+end;
+
+{процедура обновления таблицы}
+procedure UpdateFiltredTable;
+var
+ i,j:integer; //счетчики
+begin
+StatForm.StatTable.Rowcount:=length(filtredwtable)+1;
+
+//Чтобы точно была одна фиксированная строка (шапка таблицы)
+if StatForm.StatTable.RowCount=1
+  then
+   begin
+      StatForm.StatTable.Rowcount:=StatForm.StatTable.Rowcount+1;
+      StatForm.StatTable.FixedRows:=1;
+   end;
+
+//Вывод данных в таблицу
+for i := 0 to length(filtredwtable)-1 do
+ begin
+ StatForm.StatTable.Cells[0,i+1]:= filtredwtable[i].date;
+ StatForm.StatTable.Cells[1,i+1]:= filtredwtable[i].t;
+ StatForm.StatTable.Cells[2,i+1]:= filtredwtable[i].d;
+ StatForm.StatTable.Cells[3,i+1]:= filtredwtable[i].v;
+ StatForm.StatTable.Cells[4,i+1]:= filtredwtable[i].dn;
+ end;
+
+end;
+
+{выводит все данные из основного массива в таблицу stat}
+procedure AllDataToStatTable;
+var
+ i,j:integer; //счетчики
+begin
+StatForm.StatTable.Rowcount:=length(wtable)+1;
+
+//Чтобы точно была одна фиксированная строка (шапка таблицы)
+if StatForm.StatTable.RowCount=1
+  then
+   begin
+      StatForm.StatTable.Rowcount:=StatForm.StatTable.Rowcount+1;
+      StatForm.StatTable.FixedRows:=1;
+   end;
+
+//Вывод данных в таблицу
+for i := 0 to length(wtable)-1 do
+ begin
+ StatForm.StatTable.Cells[0,i+1]:= wtable[i].date;
+ StatForm.StatTable.Cells[1,i+1]:= wtable[i].t;
+ StatForm.StatTable.Cells[2,i+1]:= wtable[i].d;
+ StatForm.StatTable.Cells[3,i+1]:= wtable[i].v;
+ StatForm.StatTable.Cells[4,i+1]:= wtable[i].dn;
+ end;
+
+end;
+
+procedure Stat;
+var
+ i,j:integer; //счетчики
+ x,y:integer; //координаты
+ avgT, avgD, avgV:real; //среднее значение температуры, давления, влажности
+ minT, maxT:real; //максимальная и минимальная темпрературы
+begin
+
+ //среднее значение температуры, давления, влажности
+ avgT:=0;
+ avgD:=0;
+ avgV:=0;
+ for i := 0 to length(filtredwtable)-1 do
+  begin
+    avgT:=avgT+StrToFloat(filtredwtable[i].t);//суммируем
+    avgD:=avgD+StrToFloat(filtredwtable[i].d);//суммируем
+    avgV:=avgV+StrToFloat(filtredwtable[i].v);//суммируем
+  end;
+ avgT:=avgT/length(filtredwtable); //делим на кол-во записей
+ avgD:=avgD/length(filtredwtable); //делим на кол-во записей
+ avgV:=avgV/length(filtredwtable); //делим на кол-во записей
+ StatForm.AvgTResultLabel.Caption:=FloatToStr(SimpleRoundTo(avgT,-3))+' °C'; //выводим результат
+ StatForm.AvgDResultLabel.Caption:=FloatToStr(SimpleRoundTo(avgD,-3))+' мм рт. ст.'; //выводим результат
+ StatForm.AvgVResultLabel.Caption:=FloatToStr(SimpleRoundTo(avgV,-3))+' %'; //выводим результат
+
+ //Максимальная и минимальная темпрературы
+ minT:=StrToFloat(filtredwtable[0].t);
+ maxT:=StrToFloat(filtredwtable[0].t);
+ for i := 0 to length(filtredwtable)-1 do
+  begin
+    if maxT<StrToFloat(filtredwtable[i].t)
+      then
+        begin
+          maxT:=StrToFloat(filtredwtable[i].t);  //максимальное значение
+        end;
+
+    if minT>StrToFloat(filtredwtable[i].t)
+      then
+        begin
+          minT:=StrToFloat(filtredwtable[i].t);   //минимальное значение
+        end;
+    StatForm.MaxTResultLabel.Caption:=FloatToStr(maxT); //выводим значение max
+    StatForm.MinTResultLabel.Caption:=FloatToStr(minT); //выводим значение min
+  end;
+
+  //построение диаграммы min max температур
+  with StatForm.TMinMaxDiagram do
+    begin
+      StatForm.TMinMaxDiagram.Canvas.Rectangle(20,-(Round(minT)-Round(StatForm.TMinMaxDiagram.Height)+30),120,Round(StatForm.TMinMaxDiagram.Height-15)); //рисуем min
+      StatForm.TMinMaxDiagram.Canvas.Rectangle(125,-(Round(maxT)-Round(StatForm.TMinMaxDiagram.Height)+30),225,Round(StatForm.TMinMaxDiagram.Height-15)); //рисуем max
+      StatForm.TMinMaxDiagram.Canvas.TextOut(20,-(Round(minT)-Round(StatForm.TMinMaxDiagram.Height)+45),FloatToStr(minT));
+      StatForm.TMinMaxDiagram.Canvas.TextOut(125,-(Round(maxT)-Round(StatForm.TMinMaxDiagram.Height)+45),FloatToStr(maxT));
+    end;
+
+ //построение осей диаграммы min max температур
+ with StatForm.TMinMaxDiagram do
+   begin
+    StatForm.TMinMaxDiagram.Canvas.Pen.Width:=3;
+    StatForm.TMinMaxDiagram.Canvas.MoveTo(15,15);
+    StatForm.TMinMaxDiagram.Canvas.LineTo(15, Round(StatForm.TMinMaxDiagram.Height-15)); //ось OY
+    StatForm.TMinMaxDiagram.Canvas.MoveTo(15, Round(StatForm.TMinMaxDiagram.Height/2));
+    StatForm.TMinMaxDiagram.Canvas.LineTo(StatForm.TMinMaxDiagram.Width-15, Round(StatForm.TMinMaxDiagram.Height/2)); //ось OX
+    StatForm.TMinMaxDiagram.Canvas.TextOut(5,10,'y');   //подпись оси Y
+    StatForm.TMinMaxDiagram.Canvas.TextOut(StatForm.TMinMaxDiagram.Width-19, Round(StatForm.TMinMaxDiagram.Height/2+3),'x');  //подпись оси X
+   end;
+
+
+ //построение графика температур
+ StatForm.TPeriodDiagram.Canvas.fillrect(StatForm.TPeriodDiagram.Canvas.cliprect); //очистка холста
+ if StatForm.RadioGroupWeatherType.ItemIndex=1 then
+  begin
+   StatForm.TPeriodDiagram.Canvas.MoveTo(15, StatForm.TPeriodDiagram.Height-15);
+   with StatForm.TPeriodDiagram do
+   begin
+      StatForm.TPeriodDiagram.Canvas.Pen.Width:=1;
+      for i := 0 to (length(filtredwtable)-1) do
+        begin
+          if i=0 //первая точка без сдвига
+            then
+              x:=15
+            else
+              x:=x+Round((StatForm.TPeriodDiagram.Width-30)/(length(filtredwtable)-1)); //равномерное распределение данных по Х
+
+          y:=-(StrToInt(filtredwtable[i].t)-Round(StatForm.TPeriodDiagram.Height/2));  //Значения температур по Y
+          if i=0 then            //начинаем рисовать с первой точки, а не с начала координат
+            StatForm.TPeriodDiagram.Canvas.MoveTo(x,y);
+
+          StatForm.TPeriodDiagram.Canvas.LineTo(x,y);
+        end;
+
+        //цикл для добавления подписей данных
+        {for i := 0 to (length(filtredwtable)-1) do
+        begin
+          if i=0 //первая точка без сдвига
+            then
+              x:=15
+            else
+              x:=x+Round((StatForm.TPeriodDiagram.Width-30)/(length(filtredwtable)-1)); //равномерное распределение данных по Х
+
+          y:=-(StrToInt(filtredwtable[i].t)-Round(StatForm.TPeriodDiagram.Height/2));  //Значения температур по Y
+
+          StatForm.TPeriodDiagram.Canvas.TextOut(x,Round(StatForm.TPeriodDiagram.Height/2)+10,IntToStr(Round(StatForm.TPeriodDiagram.Height/2)-y)); //Подписи данных по Y
+        end;   }
+    end;
+
+
+  end;
+
+ //построение осей графика температур
+ with StatForm.TPeriodDiagram do
+   begin
+    StatForm.TPeriodDiagram.Canvas.Pen.Width:=3;
+    StatForm.TPeriodDiagram.Canvas.MoveTo(15,15);
+    StatForm.TPeriodDiagram.Canvas.LineTo(15, StatForm.TPeriodDiagram.Height-15); //ось OY
+    StatForm.TPeriodDiagram.Canvas.MoveTo(15, Round(StatForm.TPeriodDiagram.Height/2));
+    StatForm.TPeriodDiagram.Canvas.LineTo(StatForm.TPeriodDiagram.Width-15, Round(StatForm.TPeriodDiagram.Height/2)); //ось OX
+    StatForm.TPeriodDiagram.Canvas.TextOut(5,10,'y');   //подпись оси Y
+    StatForm.TPeriodDiagram.Canvas.TextOut(StatForm.TPeriodDiagram.Width-19, Round(StatForm.TPeriodDiagram.Height/2)+3,'x');  //подпись оси X
+   end;
+
+end;
+
+end.

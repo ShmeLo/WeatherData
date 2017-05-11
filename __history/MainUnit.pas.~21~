@@ -1,0 +1,106 @@
+unit MainUnit;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs, Grids, ExtCtrls, StdCtrls, Mask;
+
+type
+TMainForm = class(TForm)
+    TablePanel: TPanel;
+    InsertPanel: TPanel;
+    MainTable: TStringGrid;
+    TimeOfDayRadioGroup: TRadioGroup;
+    EditT: TEdit;
+    EditD: TEdit;
+    EditV: TEdit;
+    AddButton: TButton;
+    LabelDate: TLabel;
+    EditDate: TMaskEdit;
+    LabelT: TLabel;
+    LabelD: TLabel;
+    LabelV: TLabel;
+    DeleteButton: TButton;
+    SaveButton: TButton;
+    LoadButton: TButton;
+    EditButton: TButton;
+    procedure AddButtonClick(Sender: TObject);
+    procedure MainTableEnter(Sender: TObject);
+    procedure DeleteButtonClick(Sender: TObject);
+    procedure SaveButtonClick(Sender: TObject);
+    procedure LoadButtonClick(Sender: TObject);
+    procedure EditButtonClick(Sender: TObject);
+
+
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  MainForm: TMainForm;
+
+  implementation
+
+uses DataUnit, EditUnit;
+
+{$R *.dfm}
+
+
+
+procedure TMainForm.AddButtonClick(Sender: TObject);
+begin
+  //функция добавления строк
+  DataUnit.AddRow;
+
+ //добавление заголовков таблицы
+ MainForm.MainTable.Cells[0,0]:= 'Дата';
+ MainForm.MainTable.Cells[1,0]:= 'Температура';
+ MainForm.MainTable.Cells[2,0]:= 'Давление';
+ MainForm.MainTable.Cells[3,0]:= 'Влажность';
+ MainForm.MainTable.Cells[4,0]:= 'Время суток';
+
+// ShowMessage('Запись добавлена');
+
+end;
+
+
+procedure TMainForm.DeleteButtonClick(Sender: TObject);
+begin
+  //функция удаления выделенной строки
+  DataUnit.DeleteRow;
+end;
+
+procedure TMainForm.EditButtonClick(Sender: TObject);
+begin
+ EditForm.ShowModal;  //запуск формы редактирования
+end;
+
+procedure TMainForm.LoadButtonClick(Sender: TObject);
+begin
+ DataUnit.LoadData;
+end;
+
+procedure TMainForm.MainTableEnter(Sender: TObject);
+begin
+ //добавление заголовков таблицы
+ MainForm.MainTable.Cells[0,0]:= 'Дата';
+ MainForm.MainTable.Cells[1,0]:= 'Температура';
+ MainForm.MainTable.Cells[2,0]:= 'Давление';
+ MainForm.MainTable.Cells[3,0]:= 'Влажность';
+ MainForm.MainTable.Cells[4,0]:= 'Время суток';
+
+ //значение "День" по умолчанию
+ MainForm.TimeOfDayRadioGroup.ItemIndex:=0;
+
+end;
+
+
+procedure TMainForm.SaveButtonClick(Sender: TObject);
+begin
+ DataUnit.SaveData;
+end;
+
+end.

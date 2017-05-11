@@ -1,0 +1,14 @@
+program MainProject;
+
+uses
+  Forms,
+  MainUnit in 'MainUnit.pas' {MainForm},
+  Unit1 in 'DataUnit.pas';
+
+{$R *.res}
+
+begin
+  Application.Initialize;
+  Application.CreateForm(TMainForm, MainForm);
+  Application.Run;
+end.

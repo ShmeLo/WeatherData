@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<BorlandProject>
+	<Transactions>
+    <Transaction>2017.04.13 22:32:41.705.pas,C:\Users\Шмелев Сергей\Documents\Borland Studio Projects\Unit1.pas=C:\Users\Шмелев Сергей\Documents\Borland Studio Projects\W-Data\MainUnit.pas</Transaction>
+    <Transaction>2017.04.13 22:32:41.740.dfm,C:\Users\Шмелев Сергей\Documents\Borland Studio Projects\Unit1.dfm=C:\Users\Шмелев Сергей\Documents\Borland Studio Projects\W-Data\MainUnit.dfm</Transaction>
+    <Transaction>2017.04.13 22:32:55.659.bdsproj,C:\Users\Шмелев Сергей\Documents\Borland Studio Projects\Project1.bdsproj=C:\Users\Шмелев Сергей\Documents\Borland Studio Projects\W-Data\MainProject.bdsproj</Transaction>
+    <Transaction>2017.05.05 23:10:07.330.pas,C:\Users\Шмелев Сергей\Documents\Borland Studio Projects\W-Data\Unit1.pas=C:\Users\Шмелев Сергей\Documents\Borland Studio Projects\W-Data\EditUnit.pas</Transaction>
+    <Transaction>2017.05.05 23:10:07.359.dfm,C:\Users\Шмелев Сергей\Documents\Borland Studio Projects\W-Data\Unit1.dfm=C:\Users\Шмелев Сергей\Documents\Borland Studio Projects\W-Data\EditUnit.dfm</Transaction>
+    <Transaction>2017.05.06 01:06:31.500.pas,C:\Users\Шмелев Сергей\Documents\Borland Studio Projects\W-Data\EditUnit.pas=</Transaction>
+    <Transaction>2017.05.06 01:06:31.500.dfm,C:\Users\Шмелев Сергей\Documents\Borland Studio Projects\W-Data\EditUnit.dfm=</Transaction>
+    <Transaction>2017.05.08 11:12:51.976.pas,C:\Users\Шмелев Сергей\Documents\Borland Studio Projects\W-Data\Unit1.pas=C:\Users\Шмелев Сергей\Documents\Borland Studio Projects\W-Data\EditUnit.pas</Transaction>
+    <Transaction>2017.05.08 11:12:51.976.dfm,C:\Users\Шмелев Сергей\Documents\Borland Studio Projects\W-Data\Unit1.dfm=C:\Users\Шмелев Сергей\Documents\Borland Studio Projects\W-Data\EditUnit.dfm</Transaction>
+    <Transaction>2017.05.08 14:53:03.778.pas,C:\Users\Шмелев Сергей\Documents\Borland Studio Projects\WeatherData\Unit1.pas=C:\Users\Шмелев Сергей\Documents\Borland Studio Projects\WeatherData\StatUnit.pas</Transaction>
+    <Transaction>2017.05.08 14:53:03.778.dfm,C:\Users\Шмелев Сергей\Documents\Borland Studio Projects\WeatherData\Unit1.dfm=C:\Users\Шмелев Сергей\Documents\Borland Studio Projects\WeatherData\StatUnit.dfm</Transaction>
+  </Transactions>
+</BorlandProject>
