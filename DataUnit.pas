@@ -33,6 +33,7 @@ type
   procedure UpdateFiltredTable;
   procedure AllDataToStatTable;
   procedure Stat;
+  procedure SortFiltredData;
 
 implementation
 
@@ -379,8 +380,8 @@ begin
           minT:=StrToFloat(filtredwtable[i].t);   //минимальное значение
           minTi:=i;  //сохраняем номер записи
         end;
-    StatForm.MaxTResultLabel.Caption:=FloatToStr(maxT); //выводим значение max
-    StatForm.MinTResultLabel.Caption:=FloatToStr(minT); //выводим значение min
+    StatForm.MaxTResultLabel.Caption:=FloatToStr(maxT)+' °C'; //выводим значение max
+    StatForm.MinTResultLabel.Caption:=FloatToStr(minT)+' °C'; //выводим значение min
     StatForm.TMinYearLabel.Caption:= filtredwtable[minTi].date; //дата min температуры
     StatForm.TMaxYearLabel.Caption:= filtredwtable[maxTi].date; //дата max температуры
   end;
@@ -475,4 +476,45 @@ begin
 
 end;
 
+
+{сортирует отфильтрованный массив. пузырьковая сортировка}
+procedure SortFiltredData;
+var
+  i,j,n: Integer;  //счетчики
+  Sort: Boolean;  //флаг активации сортировки
+  tmp: wdata;    //временное хранение строки массива
+begin
+  //сортируем по дате
+  Sort:=True;
+  n:=length(filtredwtable)-1;  //длина массива
+  for i:=0 to n-1 do
+        for j:=i+1 to n do
+            if (StrToDate(filtredwtable[i].date)>StrToDate(filtredwtable[j].date))
+             then
+                begin
+                  Sort:=True;
+                  tmp := filtredwtable[i];
+                  filtredwtable[i] := filtredwtable[j];
+                  filtredwtable[j] := tmp;
+                end;
+
+  //сортируем по времени суток
+  Sort:=True;
+  n:=length(filtredwtable)-1;  //длина массива
+  for i:=0 to n-1 do
+        for j:=i+1 to n do
+  if (StrToDate(filtredwtable[i].date)=StrToDate(filtredwtable[j].date)) and
+                   (filtredwtable[i].dn='Ночь') and (filtredwtable[j].dn='День')
+              then
+                begin
+                  Sort:=True;
+                  tmp := filtredwtable[i];
+                  filtredwtable[i] := filtredwtable[j];
+                  filtredwtable[j] := tmp;
+                end;
+end;
+
+
 end.
+
+

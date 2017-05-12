@@ -101,6 +101,7 @@ begin
   FilterData;  //фильрует данные
   if err=false then
     begin
+      SortFiltredData;    //сортуруем по дате и по времени суток
       UpdateFiltredTable;   //выводит данные в таблицу
       Stat; //расчет показателей
     end;
