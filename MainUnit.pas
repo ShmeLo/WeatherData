@@ -48,7 +48,7 @@ var
 
   implementation
 
-uses DataUnit, EditUnit, StatUnit;
+uses DataUnit, EditUnit, StatUnit, WelcomeUnit;
 
 {$R *.dfm}
 
@@ -107,6 +107,8 @@ begin
 
  //значение "День" по умолчанию
  MainForm.TimeOfDayRadioGroup.ItemIndex:=0;
+
+ WelcomeForm.ShowModal;
 
 end;
 

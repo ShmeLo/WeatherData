@@ -1,9 +1,9 @@
 object MainForm: TMainForm
-  Left = 0
-  Top = 0
-  Caption = 'MainForm'
-  ClientHeight = 498
-  ClientWidth = 715
+  Left = 268
+  Top = 310
+  Caption = #1057#1074#1086#1076#1082#1072' '#1087#1086#1075#1086#1076#1099
+  ClientHeight = 510
+  ClientWidth = 704
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -11,11 +11,12 @@ object MainForm: TMainForm
   Font.Name = 'Tahoma'
   Font.Style = []
   OldCreateOrder = False
+  Position = poDesigned
   PixelsPerInch = 96
   TextHeight = 13
   object TablePanel: TPanel
     Left = 264
-    Top = 32
+    Top = 53
     Width = 433
     Height = 449
     Caption = 'TablePanel'
@@ -36,38 +37,38 @@ object MainForm: TMainForm
       ParentFont = False
       TabOrder = 0
       OnEnter = MainTableEnter
+      ColWidths = (
+        78
+        78
+        78
+        78
+        78)
+      RowHeights = (
+        24
+        24)
     end
     object DeleteButton: TButton
-      Left = 344
+      Left = 275
       Top = 416
-      Width = 75
+      Width = 140
       Height = 25
-      Caption = 'DeleteButton'
+      Caption = #1059#1076#1072#1083#1080#1090#1100' '#1079#1072#1087#1080#1089#1100
       TabOrder = 1
       OnClick = DeleteButtonClick
     end
-    object SaveButton: TButton
+    object EditButton: TButton
       Left = 16
       Top = 416
-      Width = 75
+      Width = 140
       Height = 25
-      Caption = 'SaveButton'
+      Caption = #1056#1077#1076#1072#1082#1090#1080#1088#1086#1074#1072#1090#1100' '#1079#1072#1087#1080#1089#1100
       TabOrder = 2
-      OnClick = SaveButtonClick
-    end
-    object LoadButton: TButton
-      Left = 112
-      Top = 416
-      Width = 75
-      Height = 25
-      Caption = 'LoadButton'
-      TabOrder = 3
-      OnClick = LoadButtonClick
+      OnClick = EditButtonClick
     end
   end
   object InsertPanel: TPanel
     Left = 8
-    Top = 32
+    Top = 53
     Width = 225
     Height = 449
     TabOrder = 1
@@ -98,6 +99,23 @@ object MainForm: TMainForm
       Width = 73
       Height = 13
       Caption = #1042#1083#1072#1078#1085#1086#1089#1090#1100', %'
+    end
+    object IncertLabel: TLabel
+      Left = 16
+      Top = 8
+      Width = 184
+      Height = 13
+      AutoSize = False
+      BiDiMode = bdLeftToRight
+      Caption = #1055#1072#1085#1077#1083#1100' '#1076#1086#1073#1072#1074#1083#1077#1085#1080#1103' '#1076#1072#1085#1085#1099#1093
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'Tahoma'
+      Font.Style = [fsBold]
+      ParentBiDiMode = False
+      ParentFont = False
+      Layout = tlCenter
     end
     object TimeOfDayRadioGroup: TRadioGroup
       Left = 16
@@ -134,9 +152,9 @@ object MainForm: TMainForm
     object AddButton: TButton
       Left = 16
       Top = 416
-      Width = 75
+      Width = 140
       Height = 25
-      Caption = 'AddButton'
+      Caption = #1044#1086#1073#1072#1074#1080#1090#1100' '#1079#1072#1087#1080#1089#1100
       TabOrder = 4
       OnClick = AddButtonClick
     end
@@ -145,10 +163,44 @@ object MainForm: TMainForm
       Top = 48
       Width = 184
       Height = 21
-      EditMask = '!99/99/0000;1;_'
+      EditMask = '!99/99/9999;1;_'
       MaxLength = 10
       TabOrder = 5
       Text = '  .  .    '
+    end
+  end
+  object ActionPanel: TPanel
+    Left = 8
+    Top = 8
+    Width = 689
+    Height = 39
+    TabOrder = 2
+    object SaveButton: TButton
+      Left = 9
+      Top = 8
+      Width = 140
+      Height = 25
+      Caption = #1057#1086#1093#1088#1072#1085#1080#1090#1100' '#1076#1072#1085#1085#1099#1077
+      TabOrder = 0
+      OnClick = SaveButtonClick
+    end
+    object LoadButton: TButton
+      Left = 167
+      Top = 8
+      Width = 140
+      Height = 25
+      Caption = #1047#1072#1075#1088#1091#1079#1080#1090#1100' '#1076#1072#1085#1085#1099#1077
+      TabOrder = 1
+      OnClick = LoadButtonClick
+    end
+    object StatButton: TButton
+      Left = 522
+      Top = 8
+      Width = 151
+      Height = 25
+      Caption = #1057#1074#1086#1076#1082#1072' '#1087#1086#1075#1086#1076#1099' '#1080' '#1075#1088#1072#1092#1080#1082#1080
+      TabOrder = 2
+      OnClick = StatButtonClick
     end
   end
 end

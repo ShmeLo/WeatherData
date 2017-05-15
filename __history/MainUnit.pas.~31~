@@ -25,12 +25,16 @@ TMainForm = class(TForm)
     SaveButton: TButton;
     LoadButton: TButton;
     EditButton: TButton;
+    ActionPanel: TPanel;
+    IncertLabel: TLabel;
+    StatButton: TButton;
     procedure AddButtonClick(Sender: TObject);
     procedure MainTableEnter(Sender: TObject);
     procedure DeleteButtonClick(Sender: TObject);
     procedure SaveButtonClick(Sender: TObject);
     procedure LoadButtonClick(Sender: TObject);
     procedure EditButtonClick(Sender: TObject);
+    procedure StatButtonClick(Sender: TObject);
 
 
   private
@@ -44,7 +48,7 @@ var
 
   implementation
 
-uses DataUnit, EditUnit;
+uses DataUnit, EditUnit, StatUnit;
 
 {$R *.dfm}
 
@@ -75,8 +79,17 @@ end;
 
 procedure TMainForm.EditButtonClick(Sender: TObject);
 begin
- EditForm.ShowModal;  //запуск формы редактирования
+ try      //защита от ошибок. начало
+   EditRow; //передает данные на форму редактирования
+   EditForm.ShowModal; //открывает форму редактирования
+   UpdateTable; //обновляет таблицу
+
+except
+  //сообщение об ошибке
+  MessageDlg('Ошибка!',mtError, mbOKCancel, 0);
+end;       //защита от ошибок. окончание
 end;
+
 
 procedure TMainForm.LoadButtonClick(Sender: TObject);
 begin
@@ -101,6 +114,14 @@ end;
 procedure TMainForm.SaveButtonClick(Sender: TObject);
 begin
  DataUnit.SaveData;
+end;
+
+procedure TMainForm.StatButtonClick(Sender: TObject);
+begin
+ 
+ AllDataToStatTable; //передаем все данные в таблицу
+ StatForm.Show; //открытие окна статистики
+
 end;
 
 end.
